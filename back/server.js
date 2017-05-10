@@ -16,21 +16,7 @@ app.use(cors());
 app.get('/api/products', (req,res,next) => {
   db.any('select * from products')
     .then((data) => {
-      let result_set = data.map((element,idx) => {
-        let pic_promise = new Promise((resolve,reject) => {
-          db.any('select i.uri, i.alt from products_images as pi inner join images as i on(pi.i_id = i.id) where pi.p_id = $1', [element.id])
-            .then((data) => {
-              resolve(data);
-            }).catch(reject);
-        });
-        let tag_promise = new Promise((resolve,reject) => {
-          db.any('select t.name from products_tags as pt inner join tags as t on(pt.t_id = t.id) where pt.p_id = $1', [element.id])
-            .then((data) => {
-              resolve(data);
-            }).catch(reject);
-        });
-        return Promise.all([element, pic_promise, tag_promise]);
-      });
+      let result_set = data.map(full_product);
       return Promise.all(result_set);
     })
     .then((results) => {
@@ -51,21 +37,7 @@ app.get('/api/products', (req,res,next) => {
 app.get('/api/product/:id', (req,res,next) => {
   let product_id = req.params.id;
   db.one('select * from products where id = $1', [product_id])
-    .then((data) => {
-      let pic_promise = new Promise((resolve,reject) => {
-        db.any('select i.uri, i.alt from products_images as pi inner join images as i on(pi.i_id = i.id) where pi.p_id = $1', [data.id])
-          .then((data) => {
-            resolve(data);
-          }).catch(reject);
-      });
-      let tag_promise = new Promise((resolve,reject) => {
-        db.any('select t.name from products_tags as pt inner join tags as t on(pt.t_id = t.id) where pt.p_id = $1', [data.id])
-          .then((data) => {
-            resolve(data);
-          }).catch(reject);
-      });
-      return Promise.all([data, pic_promise, tag_promise]);
-    })
+    .then(full_product)
     .then((results) => {
       result =  {
         product: results[0],
@@ -77,14 +49,37 @@ app.get('/api/product/:id', (req,res,next) => {
     .catch(next);
 });
 
-app.get('/api/user/signup', (req,res,next) => {
-
+// POST /api/user/signup
+// Creates new user accounts, returns standard login response
+app.post('/api/user/signup', (req,res,next) => {
+  let new_account = req.body.signup;
+  db.none('select * from users where username = $1 or email = $2', [new_account.username,new_account.email])
+    .then(() => {
+      return bcrypt.hash(new_account.password, 10);
+    })
+    .then((hash) => {
+      return Promise.all([new_account, db.one('insert into users values(default,$1,$2,$3,$4,$5) returning *', [new_account.first,new_account.last,new_account.email,new_account.username,hash])]);
+    })
+    .then(validate_login)
+    .then((result) => {
+      res.json(result);
+    })
+    .catch(next);
 });
 
-app.get('/api/user/login', (req,res,next) => {
-
+// POST /api/user/login
+// Logs in users, returns standard login response
+app.post('/api/user/login', (req,res,next) => {
+  let login = req.body.login;
+  Promise.all([login, db.one('select * from users where username = $1', [login.username])])
+    .then(validate_login)
+    .then((result) => {
+      res.json(result);
+    })
 });
 
+// AUTHENTICATION MIDDLEWARE
+// Authenticate the token provided as part of the request
 app.use(function authenticate(req,res,next) {
   db.one('select * from sessions where token=$1', [req.body.token])
     .then((data) => {
@@ -99,19 +94,61 @@ app.use(function authenticate(req,res,next) {
     });
 });
 
-app.get('/api/shopping_cart', (req,res,next) => {
+// POST /api/shopping_cart/add
+// Adds item to shopping cart
+app.post('/api/shopping_cart/add', (req,res,next) => {
 
 });
 
-app.get('/api/shopping_cart', (req,res,next) => {
+// POST /api/shopping_cart/all
+// Returns all items in a specific shopping cart
+app.post('/api/shopping_cart/all', (req,res,next) => {
 
 });
 
-app.get('/api/shopping_cart/checkout', (req,res,next) => {
+// POST /api/shopping_cart/checkout
+// Creates purchase record, links item in cart to purchase, and clears the shopping cart
+app.post('/api/shopping_cart/checkout', (req,res,next) => {
 
 });
 
 // Server listens on port 4040
 app.listen(4040, () => {
-  console.log('Server running on port 4040');
+  console.log('API running on port 4040');
 });
+
+//////////////////////
+// HELPER FUNCTIONS //
+//////////////////////
+
+// Get full product record including images and tags for a specific product
+function full_product(element) {
+  let pic_promise = db.any('select i.uri, i.alt from products_images as pi inner join images as i on(pi.i_id = i.id) where pi.p_id = $1', [element.id]);
+  let tag_promise = db.any('select t.name from products_tags as pt inner join tags as t on(pt.t_id = t.id) where pt.p_id = $1', [element.id]);
+  return Promise.all([element, pic_promise, tag_promise]);
+}
+
+// Verify that login attempt is valid
+function validate_login(attempted) {
+  let data = attempted[1];
+  let attempt = attempted[0];
+  return bcrypt.compare(attempt.password, data.password)
+    .then((res) => {
+      if (res) {
+        let x = Date.now();
+        let y = x+21600000;
+        return db.one('insert into sessions values(default,$1,$2,$3,$4) returning *', [uuid.v4(),x,y,data.id])
+      } else {
+        reject();
+      }
+    })
+    .then((result) => {
+      return {
+        username: data.username,
+        first: data.first,
+        last: data.last,
+        token: result.token
+      };
+    })
+    .catch((err) => {throw err});
+}

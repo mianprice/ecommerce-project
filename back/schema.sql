@@ -50,8 +50,8 @@ CREATE TABLE users(
 CREATE TABLE sessions(
   id SERIAL PRIMARY KEY,
   token VARCHAR,
-  created INTEGER,
-  expires INTEGER,
+  created VARCHAR,
+  expires VARCHAR,
   u_id INTEGER REFERENCES users(id)
 );
 
