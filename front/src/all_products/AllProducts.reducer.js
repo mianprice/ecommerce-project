@@ -4,7 +4,6 @@ const INITIAL = {
 
 export default function reducer(state=INITIAL, action) {
   if (action.type === 'show_all') {
-    console.log(action.payload);
     return Object.assign({}, state, {
       products: action.payload
     });

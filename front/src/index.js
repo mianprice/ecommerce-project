@@ -7,15 +7,16 @@ import {Router, Route, hashHistory, Link, IndexRoute, IndexLink} from 'react-rou
 import './index.css';
 import AllProductsContainer from './all_products/AllProducts';
 import AllProductsReducer from './all_products/AllProducts.reducer';
-// import PageContainer from './page/Page';
-// import pageReducer from './page/Page.reducer';
+import ProductContainer from './product/Product';
+import ProductReducer from './product/Product.reducer';
 // import SignupContainer from './signup/Signup';
 // import signupReducer from './signup/Signup.reducer';
 // import LoginContainer from './login/Login';
 // import loginReducer from './login/Login.reducer';
 
 const reducer = Redux.combineReducers({
-  all: AllProductsReducer
+  all: AllProductsReducer,
+  product: ProductReducer
 });
 
 const store = Redux.createStore(
@@ -48,6 +49,7 @@ ReactDOM.render(
     <Router history={hashHistory}>
       <Route path="/" component={AppLayoutContainer}>
         <IndexRoute component={AllProductsContainer}/>
+        <Route path="/product/:id" component={ProductContainer}/>
       </Route>
     </Router>
   </ReactRedux.Provider>,
