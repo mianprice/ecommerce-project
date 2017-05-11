@@ -3,13 +3,13 @@
 ----------------------
 
 -- Products
-INSERT INTO products values(default,'product 1','test product 1');
-INSERT INTO products values(default,'product 2','test product 2');
-INSERT INTO products values(default,'product 3','test product 3');
-INSERT INTO products values(default,'product 4','test product 4');
-INSERT INTO products values(default,'product 5','test product 5');
-INSERT INTO products values(default,'product 6','test product 6');
-INSERT INTO products values(default,'product 7','test product 7');
+INSERT INTO products values(default,'product 1','test product 1',5);
+INSERT INTO products values(default,'product 2','test product 2',5);
+INSERT INTO products values(default,'product 3','test product 3',5);
+INSERT INTO products values(default,'product 4','test product 4',5);
+INSERT INTO products values(default,'product 5','test product 5',5);
+INSERT INTO products values(default,'product 6','test product 6',5);
+INSERT INTO products values(default,'product 7','test product 7',5);
 
 -- Images
 INSERT INTO images values(default,'/test/i1','test image 1');
@@ -54,3 +54,29 @@ INSERT INTO products_tags values(2,2);
 INSERT INTO products_tags values(3,3);
 INSERT INTO products_tags values(3,4);
 INSERT INTO products_tags values(4,5);
+
+-- Carts
+INSERT INTO carts values(default,1);
+INSERT INTO carts values(default,2);
+INSERT INTO carts values(default,3);
+
+-- Cart/Product Links
+INSERT INTO products_carts values(1,1);
+INSERT INTO products_carts values(2,1);
+INSERT INTO products_carts values(3,1);
+INSERT INTO products_carts values(4,1);
+INSERT INTO products_carts values(5,1);
+INSERT INTO products_carts values(3,2);
+INSERT INTO products_carts values(4,2);
+INSERT INTO products_carts values(5,2);
+INSERT INTO products_carts values(3,3);
+INSERT INTO products_carts values(4,3);
+INSERT INTO products_carts values(5,3);
+
+-- Purchases
+INSERT INTO purchases values(default,1);
+
+-- Purchase/Product Links
+INSERT INTO products_purchases values(1,1);
+INSERT INTO products_purchases values(3,1);
+INSERT INTO products_purchases values(5,1);

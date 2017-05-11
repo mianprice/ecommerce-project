@@ -39,7 +39,7 @@ app.get('/api/product/:id', (req,res,next) => {
   db.one('select * from products where id = $1', [product_id])
     .then(full_product)
     .then((results) => {
-      result =  {
+      results =  {
         product: results[0],
         images: results[1],
         tags: results[2]
@@ -97,19 +97,78 @@ app.use(function authenticate(req,res,next) {
 // POST /api/shopping_cart/add
 // Adds item to shopping cart
 app.post('/api/shopping_cart/add', (req,res,next) => {
-
+  let user = req.body.user;
+  let product = req.body.product;
+  db.one('select * from carts where u_id = $1', [user])
+    .then((data) => {
+      return db.none('insert into products_carts values($1,$2)', [product,data.id]);
+    })
+    .then(() => {
+      result = {
+        success: true,
+        message: `Product ${product} has been added to the Cart of User ${user}`
+      };
+      res.json(result);
+    })
+    .catch(next);
 });
 
 // POST /api/shopping_cart/all
 // Returns all items in a specific shopping cart
 app.post('/api/shopping_cart/all', (req,res,next) => {
-
+  let user = req.body.user;
+  db.any('select p_id as id from carts as c inner join products_carts as pc on(c.id = pc.c_id) where u_id = $1', [user])
+    .then((data) => {
+      let results = data.map((element) => {
+        return db.one('select * from products where id = $1', [element.id]);
+      });
+      return Promise.all(results);
+    })
+    .then((data) => {
+      let result_set = data.map(full_product);
+      return Promise.all(result_set);
+    })
+    .then((results) => {
+      results = results.map((element, idx) => {
+        return {
+          product: element[0],
+          images: element[1],
+          tags: element[2]
+        };
+      });
+      res.json(results);
+    })
+    .catch(next);
 });
 
 // POST /api/shopping_cart/checkout
 // Creates purchase record, links item in cart to purchase, and clears the shopping cart
 app.post('/api/shopping_cart/checkout', (req,res,next) => {
-
+  let user = req.body.user;
+  db.one('insert into purchases values(default,$1) returning id', [user])
+    .then((data) => {
+      return Promise.all([data.id, db.any('select p_id as id,c.id as cart from carts as c inner join products_carts as pc on(c.id = pc.c_id) where u_id = $1', [user])]);
+    })
+    .then((result) => {
+      let inserts = result[1].map((element) => {
+        return Promise.all([element.cart, db.none('insert into products_purchases values($1,$2)', [element.id, result[0]])]);
+      });
+      return Promise.all(inserts);
+    })
+    .then((results) => {
+      let drops = results.map((element) => {
+        return db.none('delete from products_carts where c_id = $1', [element[0]])
+      });
+      return Promise.all(drops);
+    })
+    .then(() => {
+      result = {
+        success: true,
+        message: `Purchase has been completed`
+      };
+      res.json(result);
+    })
+    .catch(next);
 });
 
 // Server listens on port 4040

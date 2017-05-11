@@ -14,7 +14,8 @@ CREATE DATABASE ecomm;
 CREATE TABLE products(
   id SERIAL PRIMARY KEY,
   name VARCHAR,
-  description VARCHAR
+  description VARCHAR,
+  price INTEGER
 );
 
 CREATE TABLE images(
@@ -63,4 +64,14 @@ CREATE TABLE carts(
 CREATE TABLE products_carts(
   p_id INTEGER REFERENCES products(id),
   c_id INTEGER REFERENCES carts(id)
+);
+
+CREATE TABLE purchases(
+  id SERIAL PRIMARY KEY,
+  u_id INTEGER REFERENCES users(id)
+);
+
+CREATE TABLE products_purchases(
+  pr_id INTEGER REFERENCES products(id),
+  pu_id INTEGER REFERENCES purchases(id)
 );
