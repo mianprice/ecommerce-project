@@ -19,7 +19,7 @@ export const sendSignup = (signup) => {
           }
         })
       })
-      .then(data => dispatch(updatePage(data)))
+      .then(data => dispatch(updateToken(data)))
       .catch(resp => dispatch(pageError(resp)))
     };
     return asyncAction;
@@ -38,13 +38,13 @@ export const updateValue = (id,value) => {
   };
 };
 
-function updatePage(results) {
-  console.log(results);
+function updateToken(results) {
+  hashHistory.push('/');
   return {
     type: 'token_return',
     payload: results
   };
-};
+}
 
 function pageError(resp) {
   let error = (resp && resp.responseJSON && resp.responseJSON.message) || 'Something went wrong!';

@@ -52,8 +52,7 @@ class Signup extends React.Component {
 
 const SignupContainer = ReactRedux.connect(
   state => ({
-    signup: state.signup,
-    user: state.user
+    signup: state.signup
   }),
   actions
 )(Signup);

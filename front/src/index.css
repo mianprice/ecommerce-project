@@ -28,6 +28,15 @@ body {
   text-decoration: none;
 }
 
+.base_info {
+  background-color: black;
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  margin: 5px;
+  text-decoration: none;
+}
+
 .all_products {
   width: 100%;
   display: flex;

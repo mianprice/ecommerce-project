@@ -1,48 +1,36 @@
 import React from 'react';
 import * as ReactRedux from 'react-redux';
-import * as actions from './AllProducts.actions';
-import {Link} from 'react-router';
+import * as actions from './Login.actions';
 
-class AllProducts extends React.Component {
-  componentDidMount() {
-    this.props.showAll();
-  }
+class Login extends React.Component {
   render() {
-    let all = this.props.all.products.map((element) => {
-      // let tags = element.tags.map((element, idx) => {
-      //   return <div className="tag" key={idx}>{element.name}</div>;
-      // });
-      let image = element.images.length > 0 ? (<img src={element.images[0].uri} alt={element.images[0].alt} />) : "";
-      return (
-        <Link to={'/product/' + element.product.id} className="product" key={element.product.id} >
-          <div className="p_name">
-            {element.product.name}
-          </div>
-          <div className="p_image">
-            {image}
-          </div>
-          <div className="p_desc">
-            {element.product.description}
-          </div>
-          <div className="p_price">
-            ${element.product.price}
-          </div>
-        </Link>
-      );
-    });
     return (
-      <div className="all_products">
-        {all}
+      <div className="login">
+        <div className="form_group">
+          <div className="form_label">Username: </div>
+          <div className="form_input">
+            <input id="username" type="text" value={this.props.login.username} onChange={(event) => {this.props.updateValue(event.target.id,event.target.value);}} />
+          </div>
+        </div>
+        <div className="form_group">
+          <div className="form_label">Password: </div>
+          <div className="form_input">
+            <input id="password" type="text" value={this.props.login.password} onChange={(event) => {this.props.updateValue(event.target.id,event.target.value);}} />
+          </div>
+        </div>
+        <div className="form_group">
+          <div className="form_submit base_link" onClick={(event) => {this.props.sendLogin(this.props.login)}}>Submit</div>
+        </div>
       </div>
     );
   }
 }
 
-const AllProductsContainer = ReactRedux.connect(
+const LoginContainer = ReactRedux.connect(
   state => ({
-    all: state.all
+    login: state.login
   }),
   actions
-)(AllProducts);
+)(Login);
 
-export default AllProductsContainer;
+export default LoginContainer;
