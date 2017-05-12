@@ -15,19 +15,21 @@ import SignupContainer from './signup/Signup';
 import SignupReducer from './signup/Signup.reducer';
 import LoginContainer from './login/Login';
 import LoginReducer from './login/Login.reducer';
+import CartContainer from './cart/Cart';
+import CartReducer from './cart/Cart.reducer';
 
 const reducer = Redux.combineReducers({
   all: AllProductsReducer,
   product: ProductReducer,
   signup: SignupReducer,
-  login: LoginReducer
+  login: LoginReducer,
+  cart: CartReducer
 });
 
 const store = Redux.createStore(
   reducer,
   window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
   Redux.compose(Redux.applyMiddleware(ReduxThunk), autoRehydrate())
-
 );
 
 persistStore(store, { storage: new CookieStorage() })
@@ -35,7 +37,7 @@ persistStore(store, { storage: new CookieStorage() })
 class AppLayout extends React.Component {
   render() {
     let links = this.props.state.login.token ? (
-      <div className="nav">
+      <div className="nav" onClick={(event) => {this.props.dispatch({type: 'checkout_done'})}}>
         <div><IndexLink to="/" activeClassName="active" className="base_link">Home</IndexLink></div>
         <div><div className="base_info">Hello, {this.props.state.login.first}!</div></div>
         <div><Link to="/cart" activeClassName="active" className="base_link">View Cart</Link></div>
@@ -71,6 +73,7 @@ ReactDOM.render(
         <Route path="/product/:id" component={ProductContainer}/>
         <Route path="/signup" component={SignupContainer}/>
         <Route path="/login" component={LoginContainer}/>
+        <Route path="/cart" component={CartContainer}/>
       </Route>
     </Router>
   </ReactRedux.Provider>,

@@ -45,29 +45,3 @@ INSERT INTO products_tags values(4,2);
 INSERT INTO products_tags values(4,3);
 INSERT INTO products_tags values(5,1);
 INSERT INTO products_tags values(5,4);
-
--- Carts
-INSERT INTO carts values(default,1);
-INSERT INTO carts values(default,2);
-INSERT INTO carts values(default,3);
-
--- Cart/Product Links
-INSERT INTO products_carts values(1,1);
-INSERT INTO products_carts values(2,1);
-INSERT INTO products_carts values(3,1);
-INSERT INTO products_carts values(4,1);
-INSERT INTO products_carts values(5,1);
-INSERT INTO products_carts values(3,2);
-INSERT INTO products_carts values(4,2);
-INSERT INTO products_carts values(5,2);
-INSERT INTO products_carts values(3,3);
-INSERT INTO products_carts values(4,3);
-INSERT INTO products_carts values(5,3);
-
--- Purchases
-INSERT INTO purchases values(default,1);
-
--- Purchase/Product Links
-INSERT INTO products_purchases values(1,1);
-INSERT INTO products_purchases values(3,1);
-INSERT INTO products_purchases values(5,1);

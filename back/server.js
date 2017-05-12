@@ -62,7 +62,10 @@ app.post('/api/user/signup', (req,res,next) => {
     })
     .then(validate_login)
     .then((result) => {
-      res.json(result);
+      return Promise.all([result, db.none('insert into carts values(default, $1)', [result.id])]);
+    })
+    .then((result) => {
+      res.json(result[0]);
     })
     .catch(next);
 });
@@ -145,7 +148,8 @@ app.post('/api/shopping_cart/all', (req,res,next) => {
 // Creates purchase record, links item in cart to purchase, and clears the shopping cart
 app.post('/api/shopping_cart/checkout', (req,res,next) => {
   let user = req.body.user;
-  db.one('insert into purchases values(default,$1) returning id', [user])
+  let c = JSON.stringify(req.body.checkout);
+  db.one('insert into purchases values(default,$1,$2) returning id', [user, c])
     .then((data) => {
       return Promise.all([data.id, db.any('select p_id as id,c.id as cart from carts as c inner join products_carts as pc on(c.id = pc.c_id) where u_id = $1', [user])]);
     })
@@ -206,7 +210,8 @@ function validate_login(attempted) {
         username: data.username,
         first: data.first,
         last: data.last,
-        token: result.token
+        token: result.token,
+        id: data.id
       };
     })
     .catch((err) => {throw err});

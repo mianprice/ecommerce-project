@@ -12,6 +12,7 @@ export default function reducer(state=INITIAL, action) {
       token: action.payload.token,
       first: action.payload.first,
       last: action.payload.last,
+      id: action.payload.id,
       password: ""
     });
   } else if (action.type === 'update_login') {

@@ -24,7 +24,7 @@ class Product extends React.Component {
           <div className="p_desc">
             {product.product.description}
           </div>
-          <div className="add_to_cart">Add To Cart</div>
+          <div className="add_to_cart" onClick={(event) => {this.props.addToCart(this.props.login,product.product.id);}}>Add To Cart</div>
           <div className="p_price">
             ${product.product.price}
           </div>
@@ -42,7 +42,8 @@ class Product extends React.Component {
 
 const ProductContainer = ReactRedux.connect(
   state => ({
-    product: state.product
+    product: state.product,
+    login: state.login
   }),
   actions
 )(Product);

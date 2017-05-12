@@ -68,7 +68,8 @@ CREATE TABLE products_carts(
 
 CREATE TABLE purchases(
   id SERIAL PRIMARY KEY,
-  u_id INTEGER REFERENCES users(id)
+  u_id INTEGER REFERENCES users(id),
+  shipping_address VARCHAR
 );
 
 CREATE TABLE products_purchases(
