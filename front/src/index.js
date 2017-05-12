@@ -9,6 +9,8 @@ import AllProductsContainer from './all_products/AllProducts';
 import AllProductsReducer from './all_products/AllProducts.reducer';
 import ProductContainer from './product/Product';
 import ProductReducer from './product/Product.reducer';
+import SignupContainer from './signup/Signup';
+import SignupReducer from './signup/Signup.reducer';
 // import SignupContainer from './signup/Signup';
 // import signupReducer from './signup/Signup.reducer';
 // import LoginContainer from './login/Login';
@@ -16,7 +18,8 @@ import ProductReducer from './product/Product.reducer';
 
 const reducer = Redux.combineReducers({
   all: AllProductsReducer,
-  product: ProductReducer
+  product: ProductReducer,
+  signup: SignupReducer
 });
 
 const store = Redux.createStore(
@@ -31,6 +34,7 @@ class AppLayout extends React.Component {
       <div>
         <div className="nav">
           <div><IndexLink to="/" activeClassName="active" className="base_link">Home</IndexLink></div>
+          <div><Link to="/signup" activeClassName="active" className="base_link">Sign Up</Link></div>
         </div>
         <div className="page_body">
           {this.props.children}
@@ -50,6 +54,7 @@ ReactDOM.render(
       <Route path="/" component={AppLayoutContainer}>
         <IndexRoute component={AllProductsContainer}/>
         <Route path="/product/:id" component={ProductContainer}/>
+        <Route path="/signup" component={SignupContainer}/>
       </Route>
     </Router>
   </ReactRedux.Provider>,
