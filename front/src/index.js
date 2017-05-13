@@ -32,7 +32,7 @@ const store = Redux.createStore(
   Redux.compose(Redux.applyMiddleware(ReduxThunk), autoRehydrate())
 );
 
-persistStore(store, { storage: new CookieStorage() })
+persistStore(store, { storage: new CookieStorage() });
 
 class AppLayout extends React.Component {
   render() {
