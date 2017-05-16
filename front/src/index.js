@@ -36,6 +36,7 @@ persistStore(store, { storage: new CookieStorage() });
 
 class AppLayout extends React.Component {
   render() {
+    console.log(this.props);
     let links = this.props.state.login.token ? (
       <div className="nav" onClick={(event) => {this.props.dispatch({type: 'checkout_done'})}}>
         <div><IndexLink to="/" activeClassName="active" className="base_link">Home</IndexLink></div>
