@@ -56,9 +56,6 @@ class Cart extends React.Component {
       <div className="thanks">Your order has been placed.  Thanks for your business!</div>
     );
     let all = this.props.cart.items.map((element,idx) => {
-      // let tags = element.tags.map((element, idx) => {
-      //   return <div className="tag" key={idx}>{element.name}</div>;
-      // });
       total += parseInt(element.product.price);
       let image = element.images.length > 0 ? (<img src={element.images[0].uri} alt={element.images[0].alt} />) : "";
       return (

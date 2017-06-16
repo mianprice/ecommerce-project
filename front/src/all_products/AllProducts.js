@@ -9,9 +9,6 @@ class AllProducts extends React.Component {
   }
   render() {
     let all = this.props.all.products.map((element) => {
-      // let tags = element.tags.map((element, idx) => {
-      //   return <div className="tag" key={idx}>{element.name}</div>;
-      // });
       let image = element.images.length > 0 ? (<img src={element.images[0].uri} alt={element.images[0].alt} />) : "";
       return (
         <Link to={'/product/' + element.product.id} className="product" key={element.product.id} >
